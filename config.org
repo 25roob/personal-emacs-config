@@ -4,6 +4,21 @@
 #+STARTUP: showeverything
 #+OPTIONS: toc:2
 
+* TABLE OF CONTENTS :toc:
+- [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
+  - [[#elpaca-package-manager][Elpaca Package Manager]]
+  - [[#load-evil-mode][Load Evil mode]]
+  - [[#general-keybindings][General keybindings]]
+  - [[#org-tempo][org-tempo]]
+- [[#fonts][FONTS]]
+- [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
+  - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
+  - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+- [[#org-mode][ORG-MODE]]
+  - [[#enabling-table-of-contents][Enabling Table of Contents]]
+  - [[#enabling-org-bullets][Enabling Org Bullets]]
+- [[#which-key][WHICH-KEY]]
+
 * IMPORTANT PROGRAMS TO LOAD FIRST
 
 ** Elpaca Package Manager
@@ -109,12 +124,27 @@
       :global-prefix "M-SPC")
 
     (dt/leader-keys
+      "." '(find-file :wk "Find file")
+      "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+      "TAB TAB" '(comment-line :wk "Comment lines"))
+
+    (dt/leader-keys
       "b" '(:ignore t :wk "buffer")
-      "bb" '(switch-to-buffer :wk "Switch buffer")
-      "bk" '(kill-this-buffer :wk "Kill this buffer")
-      "bn" '(next-buffer :wk "Next buffer")
-      "bp" '(previous-buffer :wk "Previous buffer")
-      "br" '(revert-buffer :wk "Reload buffer")))
+      "b b" '(switch-to-buffer :wk "Switch buffer")
+      "b i" '(ibuffer :wk "Ibuffer")
+      "b k" '(kill-this-buffer :wk "Kill this buffer")
+      "b n" '(next-buffer :wk "Next buffer")
+      "b p" '(previous-buffer :wk "Previous buffer")
+      "b r" '(revert-buffer :wk "Reload buffer"))
+
+    (dt/leader-keys
+      "e" '(:ignore t :wk "Evaluate")
+      "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+      "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+      "e e" '(eval-expression :wk "Evaluate an elisp expression")
+      "e l" '(eval-last-sexp :wk  "Evaluate elisp expression before point")
+      "e r" '(eval-region :wk "Evaluate elisp in region"))
+    )
 #+end_src
 
 ** org-tempo
@@ -179,8 +209,14 @@ Let's make GNU Emacs look a little better.
     :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
 
-
 ** Enabling Org Bullets
+*** TODO: search for a way for fixing symbol replacement
+#+begin_src emacs-lisp
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (use-package org-bullets :ensure t)
+  (add-hook  'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+
 
 * WHICH-KEY
 #+begin_src emacs-lisp
@@ -202,7 +238,3 @@ Let's make GNU Emacs look a little better.
   	which-key-allow-imprecise-window-fit t
   	which-key-separator " -> "))
 #+end_src
-
-#+RESULTS:
-: [nil 26818 8630 168619 nil elpaca-process-queues nil nil 561000 nil]
-
