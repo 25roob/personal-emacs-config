@@ -1,12 +1,18 @@
-alias config /usr/bin/git --git-dir=/data/data/com.termux/files/home/dotfiles --work-tree=/data/data/com.termux/files/home
-alias rm rm -i
-alias mv mv -i
-alias cp cp -i
-alias merge xrdb -merge /data/data/com.termux/files/home/.Xresources
-alias l. exa -a1
-alias lt exa -aT --color=always --group-directories-first
-alias ll exa -l --color=always --group-directories-first
-alias la exa -a --color=always --group-directories-first
-alias ls exa -al --color=always --group-directories-first
-alias less view-file
-alias ff find-file
+# Aliases for emacs commands
+alias ff find-file $1
+# Aliasing standard shell commands to better emacs alternatives
+alias less view-file $1
+# Changing "ls" to "ls"
+alias ls ls -al --color=always --group-directories-first $*  # my preferred listing
+alias la ls -a --color=always --group-directories-first $*   # all files and dirs
+alias ll ls -l --color=always --group-directories-first $*   # long format
+alias lt ls -aT --color=always --group-directories-first $*  # tree listing
+alias l. ls -a1 $* | grep "^\."                              # list hidden files
+# Merge Xresources
+alias merge xrdb -merge ~/.Xresources
+# Confirm before overwriting something
+alias cp cp -i $1
+alias mv mv -i $1
+alias rm rm -i $1
+# Bare git repo alias for dotfiles
+alias config /usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME $*

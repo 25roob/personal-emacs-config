@@ -5,6 +5,7 @@
 #+OPTIONS: toc:2
 
 * TABLE OF CONTENTS :toc:
+- [[#dependencies][DEPENDENCIES]]
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
   - [[#load-evil-mode][Load Evil mode]]
@@ -29,6 +30,10 @@
   - [[#vterm-toggle][Vterm-toggle]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#which-key][WHICH-KEY]]
+
+* DEPENDENCIES  
+- CMake =sudo apt install cmake=
+- libtool-bin =sudo apt-get install libtool-bin=
 
 * IMPORTANT PROGRAMS TO LOAD FIRST
 
@@ -150,12 +155,14 @@
       "b r" '(revert-buffer :wk "Reload buffer"))
 
     (dt/leader-keys
-      "e" '(:ignore t :wk "Evaluate")
+      "e" '(:ignore t :wk "Eshell/Evaluate")
       "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
       "e d" '(eval-defun :wk "Evaluate defun containing or after point")
       "e e" '(eval-expression :wk "Evaluate an elisp expression")
+      "e h" '(counsel-esh-history :wk "Eshell history")
       "e l" '(eval-last-sexp :wk  "Evaluate elisp expression before point")
-      "e r" '(eval-region :wk "Evaluate elisp in region"))
+      "e r" '(eval-region :wk "Evaluate elisp in region")
+      "e s" '(eshell :wk "Eshell"))
 
     (dt/leader-keys
       "h" '(:ignore t :aw "Help!")
@@ -166,8 +173,9 @@
     (dt/leader-keys
       "t" '(:ignore t :wk "Toggle")
       "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-      "t t" '(visual-line-mode :wk "Toggle truncated lines"))
-    
+      "t t" '(visual-line-mode :wk "Toggle truncated lines")
+      "t v" '(vterm-toggle :wk "Toggle vterm"))
+
     (dt/leader-keys
       "w" '(:ignore t :wk "Windows")
       "w c" '(evil-window-delete :wk "Delete window")
@@ -285,27 +293,29 @@ Defining the various fonts that Emacs will use.
 
 ** Setting the Font Face
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil
-    :font "JetBrains Mono"
-    :height 110
-    :weight 'medium)
-  (set-face-attribute 'variable-pitch nil
-    :font "Ubuntu"
-    :height 120
-    :weight 'medium)
-  (set-face-attribute 'fixed-pitch nil
-    :font "JetBrains Mono"
-    :height 110
-    :weight 'medium)
-  ;; Makes commented text and keywords italics.
-  ;; This is working in emacsclient but not emacs.
-  ;; Your font must have an italic face available
-  (set-face-attribute 'font-lock-comment-face nil
-    :slant 'italic)
-  (set-face-attribute 'font-lock-keyword-face nil
-    :slant 'italic)
+(set-face-attribute 'default nil
+  :font "JetBrains Mono"
+  :height 110
+  :weight 'medium)
+(set-face-attribute 'variable-pitch nil
+  :font "Ubuntu"
+  :height 120
+  :weight 'medium)
+(set-face-attribute 'fixed-pitch nil
+  :font "JetBrains Mono"
+  :height 110
+  :weight 'medium)
+;; Makes commented text and keywords italics.
+;; This is working in emacsclient but not emacs.
+;; Your font must have an italic face available
+(set-face-attribute 'font-lock-comment-face nil
+  :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+  :slant 'italic)
 
-  (set-face-attribute 'default-frame-alist '(font . "JetBrains Mono-11"))
+(set-face-attribute 'default-frame-alist '(font . "JetBrains Mono-11"))
+
+
 (defun my-org-faces ()
     (set-face-attribute 'org-todo nil :height 0.8)
     (set-face-attribute 'org-level-1 nil :height 1.8)
@@ -428,8 +438,36 @@ Eshell is an Emacs /shell/ that is written in elisp
 #+end_src
 
 ** Vterm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :ensure t
+    :config
+    (setq shell-file-name "/bin/bash"
+          vterm-max-scrollback 5000))
+#+end_src
 
 ** Vterm-toggle
+#+begin_src emacs-lisp
+  (use-package vterm-toggle
+  :after vterm
+  :ensure t
+  :config
+  (setq vterm-toggle-fullscreen-p nil)
+  (setq vterm-toggle-scope 'project)
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-or-name _)
+                     (let ((buffer (get-buffer buffer-or-name)))
+                       (with-current-buffer buffer
+                         (or (equal major-mode 'vterm-mode)
+                             (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                  (display-buffer-reuse-window display-buffer-at-bottom)
+                  ;;(display-buffer-reuse-window display-buffer-in-direction)
+                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                  ;;(direction . bottom)
+                  ;;(dedicated . t) ;dedicated is supported in emacs27
+                  (reusable-frames . visible)
+                  (window-height . 0.3))))
+#+end_src
 
 * SUDO EDIT
 =sudo-edit= gives us the ability to open files with sudo privileges or switch over to editing with sudo privileges if we initially opened the file without such privileges.
