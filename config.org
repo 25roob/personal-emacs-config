@@ -29,6 +29,8 @@
   - [[#vterm][Vterm]]
   - [[#vterm-toggle][Vterm-toggle]]
 - [[#sudo-edit][SUDO EDIT]]
+- [[#rainbow-mode][RAINBOW MODE]]
+- [[#theme][THEME]]
 - [[#which-key][WHICH-KEY]]
 
 * DEPENDENCIES  
@@ -480,6 +482,19 @@ Eshell is an Emacs /shell/ that is written in elisp
       "f U" '(sudo-edit :wk "Sudo edit file")))
 #+end_src
 
+* RAINBOW MODE
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :ensure t
+    :hook org-mode prog-mode)
+#+end_src
+
+* THEME
+#+begin_src emacs-lisp
+(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+(load-theme 'silkworm t)
+#+end_src
+
 * WHICH-KEY
 #+begin_src emacs-lisp
   (use-package which-key
@@ -500,3 +515,5 @@ Eshell is an Emacs /shell/ that is written in elisp
   	which-key-allow-imprecise-window-fit t
   	which-key-separator " => "))
 #+end_src
+
+ 
