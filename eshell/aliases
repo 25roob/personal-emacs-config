@@ -1,0 +1,12 @@
+alias config /usr/bin/git --git-dir=/data/data/com.termux/files/home/dotfiles --work-tree=/data/data/com.termux/files/home
+alias rm rm -i
+alias mv mv -i
+alias cp cp -i
+alias merge xrdb -merge /data/data/com.termux/files/home/.Xresources
+alias l. exa -a1
+alias lt exa -aT --color=always --group-directories-first
+alias ll exa -l --color=always --group-directories-first
+alias la exa -a --color=always --group-directories-first
+alias ls exa -al --color=always --group-directories-first
+alias less view-file
+alias ff find-file
