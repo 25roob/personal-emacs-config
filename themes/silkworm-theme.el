@@ -39,7 +39,7 @@
       (bg3 "#292929")
       (bg4 "#3d3d3d")
       (builtin "#0073b5")
-      (keyword "#1eab70")
+      (keyword "#288a61")
       (const   "#a74f31")
       (comment "#0e794c")
       (func    "#ad4271")

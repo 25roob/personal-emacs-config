@@ -167,7 +167,7 @@
       "e s" '(eshell :wk "Eshell"))
 
     (dt/leader-keys
-      "h" '(:ignore t :aw "Help!")
+      "h" '(:ignore t :wk "Help!")
       "h f" '(describe-function :wk "Describe function")
       "h v" '(describe-variable :wk "Describe variable")
       "h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
