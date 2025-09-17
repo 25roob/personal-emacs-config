@@ -16,6 +16,7 @@
 - [[#fonts][FONTS]]
   - [[#setting-the-font-face][Setting the Font Face]]
   - [[#zooming-inout][Zooming In/Out]]
+- [[#theme][THEME]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
@@ -30,7 +31,6 @@
   - [[#vterm-toggle][Vterm-toggle]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#rainbow-mode][RAINBOW MODE]]
-- [[#theme][THEME]]
 - [[#which-key][WHICH-KEY]]
 
 * DEPENDENCIES  
@@ -310,10 +310,10 @@ Defining the various fonts that Emacs will use.
 ;; Makes commented text and keywords italics.
 ;; This is working in emacsclient but not emacs.
 ;; Your font must have an italic face available
-(set-face-attribute 'font-lock-comment-face nil
-  :slant 'italic)
-(set-face-attribute 'font-lock-keyword-face nil
-  :slant 'italic)
+ (set-face-attribute 'font-lock-comment-face nil
+   :slant 'italic)
+;;(set-face-attribute 'font-lock-keyword-face nil
+;;  :slant 'italic)
 
 (set-face-attribute 'default-frame-alist '(font . "JetBrains Mono-11"))
 
@@ -334,6 +334,12 @@ You can use the bindings CTRL plus =/- for zooming in/out. You can also use the 
 (global-set-key (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
 (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+#+end_src
+
+* THEME
+#+begin_src emacs-lisp
+(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+(load-theme 'silkworm t)
 #+end_src
 
 * GRAPHICAL USER INTERFACE TWEAKS
@@ -489,11 +495,6 @@ Eshell is an Emacs /shell/ that is written in elisp
     :hook org-mode prog-mode)
 #+end_src
 
-* THEME
-#+begin_src emacs-lisp
-(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-(load-theme 'silkworm t)
-#+end_src
 
 * WHICH-KEY
 #+begin_src emacs-lisp
@@ -515,5 +516,3 @@ Eshell is an Emacs /shell/ that is written in elisp
   	which-key-allow-imprecise-window-fit t
   	which-key-separator " => "))
 #+end_src
-
- 
