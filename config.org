@@ -12,6 +12,7 @@
   - [[#general-keybindings][General keybindings]]
   - [[#org-tempo][org-tempo]]
 - [[#all-the-icons][ALL THE ICONS]]
+- [[#app-launcher][APP LAUNCHER]]
 - [[#buffer-move][BUFFER-MOVE]]
 - [[#fonts][FONTS]]
   - [[#setting-the-font-face][Setting the Font Face]]
@@ -216,6 +217,24 @@ This is an icon set that can be used with dashboard, dired, ibuffer and other Em
   (use-package all-the-icons-dired
     :ensure t
     :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+end_src
+
+* APP LAUNCHER
+#+begin_src emacs-lisp
+  (defun emacs-counsel-launcher ()
+    "Create and select a frame called emacs-counsel-launcher which consist only of a minibuffer and has specific dimensions. Runs counsel-linux-app on that frame, which is an emacs command that prompts you to select an app and open it in a dmenu like behaviour. Delete the frame after that command has exited"
+    (interactive)
+    (with-selected-frame
+      (make-frame '((name . "emacs-run-launcher")
+                    (minibuffer . only) 
+                    (fullscreen . 0) ; no fullscreen
+                    (undecorated . t) ; remove title bar
+                    (internal-border-width . 10)
+                    (width . 80)
+                    (height . 11)))
+      (unwind-protect
+        (counsel-linux-app)
+        (delete-frame))))
 #+end_src
 
 * BUFFER-MOVE
@@ -447,34 +466,34 @@ Eshell is an Emacs /shell/ that is written in elisp
 
 ** Vterm
 #+begin_src emacs-lisp
- ; (use-package vterm
- ;   :ensure t
- ;   :config
- ;   (setq shell-file-name "/bin/bash"
- ;         vterm-max-scrollback 5000))
+ (use-package vterm
+   :ensure t
+   :config
+   (setq shell-file-name "/bin/bash"
+         vterm-max-scrollback 5000))
 #+end_src
 
 ** Vterm-toggle
 #+begin_src emacs-lisp
- ; (use-package vterm-toggle
- ; :after vterm
- ; :ensure t
- ; :config
- ; (setq vterm-toggle-fullscreen-p nil)
- ; (setq vterm-toggle-scope 'project)
- ; (add-to-list 'display-buffer-alist
- ;              '((lambda (buffer-or-name _)
- ;                    (let ((buffer (get-buffer buffer-or-name)))
- ;                      (with-current-buffer buffer
- ;                        (or (equal major-mode 'vterm-mode)
- ;                            (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
- ;                 (display-buffer-reuse-window display-buffer-at-bottom)
- ;                 ;;(display-buffer-reuse-window display-buffer-in-direction)
- ;                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
- ;                 ;;(direction . bottom)
- ;                 ;;(dedicated . t) ;dedicated is supported in emacs27
- ;                 (reusable-frames . visible)
- ;                 (window-height . 0.3))))
+ (use-package vterm-toggle
+ :after vterm
+ :ensure t
+ :config
+ (setq vterm-toggle-fullscreen-p nil)
+ (setq vterm-toggle-scope 'project)
+ (add-to-list 'display-buffer-alist
+              '((lambda (buffer-or-name _)
+                    (let ((buffer (get-buffer buffer-or-name)))
+                      (with-current-buffer buffer
+                        (or (equal major-mode 'vterm-mode)
+                            (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 ;;(display-buffer-reuse-window display-buffer-in-direction)
+                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                 ;;(direction . bottom)
+                 ;;(dedicated . t) ;dedicated is supported in emacs27
+                 (reusable-frames . visible)
+                 (window-height . 0.3))))
 #+end_src
 
 * SUDO EDIT
