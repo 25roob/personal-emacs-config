@@ -34,7 +34,7 @@
       (fg3 "#a1a09e")
       (fg4 "#92918f")
       (fg6 "#cfcecc")
-      (bg1 "#0a2820")
+      (bg1 "#0f1a20")
       (bg2 "#141414")
       (bg3 "#292929")
       (bg4 "#3d3d3d")
@@ -251,8 +251,8 @@
         `(show-paren-match-face ((,class (:background ,warning))))) ;; obsoleted in 22.1, removed 2016
      (custom-theme-set-faces
       'silkworm
-      `(show-paren-match ((,class (:foreground ,bg1 :background ,str))))
-      `(show-paren-mismatch ((,class (:foreground ,bg1 :background ,warning))))))
+      `(show-paren-match ((,class (:foreground ,bg4 :background ,str))))
+      `(show-paren-mismatch ((,class (:foreground ,bg4 :background ,warning))))))
    ;; emacs >= 26.1
    (when (>= emacs-major-version 26)
      (custom-theme-set-faces

@@ -32,6 +32,8 @@
   - [[#vterm-toggle][Vterm-toggle]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#rainbow-mode][RAINBOW MODE]]
+- [[#splash-screen][SPLASH SCREEN]]
+  - [[#for-emacs-daemon][For Emacs Daemon]]
 - [[#which-key][WHICH-KEY]]
 
 * DEPENDENCIES  
@@ -314,18 +316,18 @@ Defining the various fonts that Emacs will use.
 
 ** Setting the Font Face
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
-(set-face-attribute 'variable-pitch nil
-  :font "Ubuntu"
-  :height 120
-  :weight 'medium)
-(set-face-attribute 'fixed-pitch nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
+;;(set-face-attribute 'default nil
+;;  :font "JetBrains Mono"
+;;  :height 110
+;;  :weight 'medium)
+;;(set-face-attribute 'variable-pitch nil
+;;  :font "Ubuntu"
+;;  :height 120
+;;  :weight 'medium)
+;;(set-face-attribute 'fixed-pitch nil
+;;  :font "JetBrains Mono"
+;;  :height 110
+;;  :weight 'medium)
 ;; Makes commented text and keywords italics.
 ;; This is working in emacsclient but not emacs.
 ;; Your font must have an italic face available
@@ -368,7 +370,7 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  ;; (scroll-bar-mode -1)
+  ;;(scroll-bar-mode -1)
 #+end_src
 
 ** Display Line Numbers and Truncated Lines
@@ -514,6 +516,32 @@ Eshell is an Emacs /shell/ that is written in elisp
     :hook org-mode prog-mode)
 #+end_src
 
+* SPLASH SCREEN
+Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-file
+
+#+begin_src emacs-lisp
+  (use-package dashboard
+      :ensure t
+      :diminish dashboard-mode
+      :config
+      (setq dashboard-banner-logo-title "Welcome to Emacs!")
+      ;options: 'logo 'official "*.png" "*.txt" (cons "op1" "op2")
+      (setq dashboard-startup-banner (cons "~/.config/emacs/banners/mini-marivector.png"
+                                           "~/.config/emacs/banners/ascii.txt"))       
+      (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+      (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+      ;; (setq dashboard-items '((recents  . 5)
+                              ;; (bookmarks . 5)))
+      (setq dashboard-items '((recents  . 5)))
+      (setq dashboard-center-content t)
+      (dashboard-setup-startup-hook))
+#+end_src
+
+** For Emacs Daemon
+#+begin_src emacs-lisp
+  (setq initial-buffer-choice 
+        (lambda () (get-buffer-create dashboard-buffer-name)))
+#+end_src
 
 * WHICH-KEY
 #+begin_src emacs-lisp
