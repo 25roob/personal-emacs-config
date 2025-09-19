@@ -19,6 +19,7 @@
 - [[#fonts][FONTS]]
   - [[#setting-the-font-face][Setting the Font Face]]
   - [[#zooming-inout][Zooming In/Out]]
+- [[#projectile][PROJECTILE]]
 - [[#theme][THEME]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
@@ -249,30 +250,28 @@ You should bind this to a keybinding:
 ** App-Launcher
 The =app-launcher= is a better run launcher since it reads the desktop applications on your system and you can search them by their names as defined in their desktop file.  This means that sometimes you have to search for a generic term rather than the actual binary command of the program.
 #+begin_src emacs-lisp
-  ;; (use-package app-launcher
-  ;;   :ensure t
-  ;;   :elpaca '(app-launcher :host github :repo "SebastienWae/app-launcher"))
-  ;; ;; create a global keyboard shortcut with the following code
-  ;; ;; emac
-  ;; sclient -cF "((visibility . nil))" -e "(emacs-run-launcher)"
+  (use-package app-launcher
+    :ensure '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+   ;; create a global keyboard shortcut with the following code
+   ;; emacsclient -cF "((visibility . nil))" -e "(emacs-run-launcher)"
 
-  ;;(defun emacs-run-launcher ()
-  ;;  "Create and select a frame called emacs-run-launcher which consists only of a minibuffer and has specific dimensions. Runs app-launcher-run-app on that frame, which is an emacs command that prompts you to select an app and open it in a dmenu like behaviour. Delete the frame after that command has exited"
-  ;;  (interactive)
-  ;;  (with-selected-frame 
-  ;;    (make-frame '((name . "emacs-run-launcher")
-  ;;                  (minibuffer . only)
-  ;;                  (fullscreen . 0) ; no fullscreen
-  ;;                  (undecorated . t) ; remove title bar
-  ;;                  ;;(auto-raise . t) ; focus on this frame
-  ;;                  ;;(tool-bar-lines . 0)
-  ;;                  ;;(menu-bar-lines . 0)
-  ;;                  (internal-border-width . 10)
-  ;;                  (width . 80)
-  ;;                  (height . 11)))
-  ;;                  (unwind-protect
-  ;;                    (app-launcher-run-app)
-  ;;                    (delete-frame))))
+  (defun emacs-run-launcher ()
+    "Create and select a frame called emacs-run-launcher which consists only of a minibuffer and has specific dimensions. Runs app-launcher-run-app on that frame, which is an emacs command that prompts you to select an app and open it in a dmenu like behaviour. Delete the frame after that command has exited"
+    (interactive)
+    (with-selected-frame 
+      (make-frame '((name . "emacs-run-launcher")
+                    (minibuffer . only)
+                    (fullscreen . 0) ; no fullscreen
+                    (undecorated . t) ; remove title bar
+                    ;;(auto-raise . t) ; focus on this frame
+                    ;;(tool-bar-lines . 0)
+                    ;;(menu-bar-lines . 0)
+                    (internal-border-width . 10)
+                    (width . 80)
+                    (height . 11)))
+                    (unwind-protect
+                      (app-launcher-run-app)
+                      (delete-frame))))
 #+end_src
 
 * BUFFER-MOVE
@@ -391,6 +390,15 @@ You can use the bindings CTRL plus =/- for zooming in/out. You can also use the 
 (global-set-key (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
 (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+#+end_src
+
+* PROJECTILE
+Projectile is a project interaction library for Emacs.  
+#+begin_src emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-mode 1))
 #+end_src
 
 * THEME
@@ -599,3 +607,4 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
   	which-key-allow-imprecise-window-fit t
   	which-key-separator " => "))
 #+end_src
+

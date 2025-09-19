@@ -87,7 +87,7 @@
    `(org-level-1 ((,class (:bold t :foreground ,builtin :height 1.1))))
    `(org-level-2 ((,class (:bold nil :foreground ,str))))
    `(org-level-3 ((,class (:bold t :foreground ,const))))
-   `(org-level-4 ((,class (:bold nil :foreground ,bg4))))
+   `(org-level-4 ((,class (:bold nil :foreground ,func))))
    `(org-date ((,class (:underline t :foreground ,var) )))
    `(org-footnote  ((,class (:underline t :foreground ,fg4))))
    `(org-link ((,class (:underline t :foreground ,type ))))
