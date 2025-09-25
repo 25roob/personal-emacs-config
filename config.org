@@ -16,6 +16,10 @@
   - [[#counsel-linux-app][Counsel Linux App]]
   - [[#app-launcher-1][App-Launcher]]
 - [[#buffer-move][BUFFER-MOVE]]
+- [[#company][COMPANY]]
+- [[#diminish][DIMINISH]]
+- [[#dired][DIRED]]
+- [[#flycheck][FLYCHECK]]
 - [[#fonts][FONTS]]
   - [[#setting-the-font-face][Setting the Font Face]]
   - [[#zooming-inout][Zooming In/Out]]
@@ -25,6 +29,8 @@
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
+- [[#language-support][LANGUAGE SUPPORT]]
+- [[#neotree][NEOTREE]]
 - [[#org-mode][ORG-MODE]]
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
@@ -37,6 +43,7 @@
 - [[#rainbow-mode][RAINBOW MODE]]
 - [[#splash-screen][SPLASH SCREEN]]
   - [[#for-emacs-daemon][For Emacs Daemon]]
+- [[#transparency][TRANSPARENCY]]
 - [[#which-key][WHICH-KEY]]
 
 * DEPENDENCIES  
@@ -129,87 +136,121 @@
   ;;Note this will cause evaluate the declaration immediately. It is not deferred.
   ;;Useful for configuring built-in emacs features.
   (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
+  
+(setq evil-undo-system 'undo-redo)   
 #+end_src
 
 
 ** General keybindings
 
 #+begin_src emacs-lisp
-  (use-package general
-    :ensure t
-    :config
-    (general-evil-setup)
+(use-package general
+  :ensure t
+  :config
+  (general-evil-setup)
 
-    ;; set up 'SPC' as the global leader key
-    (general-create-definer dt/leader-keys
-      :states '(normal insert visual emacs)
-      :keymaps 'override
-      :prefix "SPC"
-      :global-prefix "M-SPC")
+  ;; set up 'SPC' as the global leader key
+  (general-create-definer dt/leader-keys
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "M-SPC")
 
-    (dt/leader-keys
-      "." '(find-file :wk "Find file")
-      "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
-      "f r" '(counsel-recentf :wk "Find recent files")
-      "TAB TAB" '(comment-line :wk "Comment lines"))
+  (dt/leader-keys
+    "SPC" '(counsel-M-x :wk "Counsel M-x")
+    "." '(find-file :wk "Find file")
+    "f" '(:ignore t :wk "Frequent files")
+    "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "f r" '(counsel-recentf :wk "Find recent files")
+    "TAB" '(:ignore t :wk "Comment out")
+    "TAB TAB" '(comment-line :wk "Comment lines"))
 
-    (dt/leader-keys
-      "b" '(:ignore t :wk "buffer")
-      "b b" '(switch-to-buffer :wk "Switch buffer")
-      "b i" '(ibuffer :wk "Ibuffer")
-      "b k" '(kill-this-buffer :wk "Kill this buffer")
-      "b n" '(next-buffer :wk "Next buffer")
-      "b p" '(previous-buffer :wk "Previous buffer")
-      "b r" '(revert-buffer :wk "Reload buffer"))
+  (dt/leader-keys
+    "b" '(:ignore t :wk "Buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-this-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer"))
+  
+  (dt/leader-keys
+    "d" '(:ignore t :wk "Dired")
+    "d d" '(dired :wk "Open dired")
+    "d j" '(dired-jump :wk "Dired jump to current")
+    "d n" '(neotree-dir :wk "Open directory in neotree")
+    "d p" '(peep-dired :wk "Peep-dired"))
 
-    (dt/leader-keys
-      "e" '(:ignore t :wk "Eshell/Evaluate")
-      "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
-      "e d" '(eval-defun :wk "Evaluate defun containing or after point")
-      "e e" '(eval-expression :wk "Evaluate an elisp expression")
-      "e h" '(counsel-esh-history :wk "Eshell history")
-      "e l" '(eval-last-sexp :wk  "Evaluate elisp expression before point")
-      "e r" '(eval-region :wk "Evaluate elisp in region")
-      "e s" '(eshell :wk "Eshell"))
+  (dt/leader-keys
+    "e" '(:ignore t :wk "Eshell/Evaluate")
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    "e e" '(eval-expression :wk "Evaluate an elisp expression")
+    "e h" '(counsel-esh-history :wk "Eshell history")
+    "e l" '(eval-last-sexp :wk  "Evaluate elisp expression before point")
+    "e r" '(eval-region :wk "Evaluate elisp in region")
+    "e s" '(eshell :wk "Eshell"))
 
-    (dt/leader-keys
-      "h" '(:ignore t :wk "Help!")
-      "h f" '(describe-function :wk "Describe function")
-      "h v" '(describe-variable :wk "Describe variable")
-      "h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
+  (dt/leader-keys
+    "h" '(:ignore t :wk "Help!")
+    "h f" '(describe-function :wk "Describe function")
+    "h t" '(load-theme :wk "Load theme")
+    "h v" '(describe-variable :wk "Describe variable")
+    "h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
 
-    (dt/leader-keys
-      "t" '(:ignore t :wk "Toggle")
-      "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-      "t t" '(visual-line-mode :wk "Toggle truncated lines")
-      "t v" '(vterm-toggle :wk "Toggle vterm"))
+  (dt/leader-keys
+    "m" '(:ignore t :wk "Org")
+    "m a" '(org-agenda :wk "Org agenda")
+    "m e" '(org-export-dispatch :wk "Org export dispatch")
+    "m i" '(org-toggle-item :wk "Org toggle item")
+    "m t" '(org-todo :wk "Org todo")
+    "m B" '(org-babel-tangle :wk "Org babel tangle")
+    "m T" '(org-todo-list :wk "Org todo list"))
 
-    (dt/leader-keys
-      "w" '(:ignore t :wk "Windows")
-      "w c" '(evil-window-delete :wk "Delete window")
-      "w n" '(evil-window-new :wk "New window")
-      "w s" '(evil-window-split :wk "Horizontal split window")
-      "w v" '(evil-window-vsplit :wk "Vertical split window")
-      ;; Window motion
-      "w h" '(evil-window-left :wk "Window left")
-      "w l" '(evil-window-right :wk "Window right")
-      "w j" '(evil-window-down :wk "Window down")
-      "w k" '(evil-window-up :wk "Window up")
-      "w w" '(evil-window-next :wk "Next window")
-      "w W" '(evil-window-prev :wk "Previous window")
-      ;; Reorder windows
-      "w H" '(buf-move-left :wk "Move buffer left")
-      "w J" '(buf-move-down :wk "Move buffer down")
-      "w K" '(buf-move-up :wk "Move buffer up")
-      "w L" '(buf-move-right :wk "Move buffer right"))
-    )
+  (dt/leader-keys
+    "m b" '(:ignore t :wk "Tables")
+    "m b -" '(org-table-insert-hline :wk "Insert hline in table"))
+
+  (dt/leader-keys
+    "m d" '(:ignore t :wk "Date/Deadline")
+    "m d t" '(org-time-stamp :wk "Org time stamp"))
+
+  (dt/leader-keys
+    "t" '(:ignore t :wk "Toggle")
+    "t e" '(eshell-toggle :wk "Toggle eshell")
+    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+    "t n" '(neotree-toggle :wk "Toggle neotree file viewer")
+    "t t" '(visual-line-mode :wk "Toggle truncated lines")
+    "t v" '(vterm-toggle :wk "Toggle vterm"))
+
+  (dt/leader-keys
+    "w" '(:ignore t :wk "Windows")
+    "w c" '(evil-window-delete :wk "Delete window")
+    "w n" '(evil-window-new :wk "New window")
+    "w s" '(evil-window-split :wk "Horizontal split window")
+    "w v" '(evil-window-vsplit :wk "Vertical split window")
+    ;; Window motion
+    "w h" '(evil-window-left :wk "Window left")
+    "w l" '(evil-window-right :wk "Window right")
+    "w j" '(evil-window-down :wk "Window down")
+    "w k" '(evil-window-up :wk "Window up")
+    "w w" '(evil-window-next :wk "Next window")
+    "w W" '(evil-window-prev :wk "Previous window")
+    ;; Reorder windows
+    "w H" '(buf-move-left :wk "Move buffer left")
+    "w J" '(buf-move-down :wk "Move buffer down")
+    "w K" '(buf-move-up :wk "Move buffer up")
+    "w L" '(buf-move-right :wk "Move buffer right"))
+  )
 #+end_src
 
 ** org-tempo
 #+begin_src emacs-lisp
   (require 'org-tempo)
   (add-to-list 'org-structure-template-alist
-    '("m"."src emacs-lisp"))
+               '("m"."src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist
+               '("hb" . "src racket :lang htdp/bsl"))
 #+end_src
 
 * ALL THE ICONS
@@ -346,6 +387,66 @@ one, an error is signaled."
       (select-window other-win))))
 #+end_src
 
+* COMPANY
+=company= is a completion framework for Emacs. The name stands for "Complete Anything". Completion will start automatically after you type a few letters. Use M-p and M-n to select, <return> to complete or <TAB> to complete the common part.
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .1)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+
+(use-package company-box
+  :ensure t
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+#+end_src
+
+* DIMINISH
+This package implements hiding or abbreviation of the modeline displays (lighters) of minor-modes.  With this package installed, you can add ‘:diminish’ to any use-package block to hide that particular mode in the modeline.
+#+begin_src emacs-lisp
+(use-package diminish :ensure t)
+#+end_src
+
+* DIRED
+#+begin_src emacs-lisp
+(use-package dired-open
+  :ensure t
+  :config 
+  (setq dired-open-extensions '(("gif" . "sxiv")
+				("jpg" . "sxiv")
+				("png" . "sxiv")
+				("mkv" . "mpv")
+				("mp4" . "mpv"))))
+
+(use-package peep-dired
+  :after dired
+  :ensure t
+  :hook (evil-normalize-keymaps . peep-dired-hook)
+  :config
+  (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
+  (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
+  (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
+  (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file)) 
+#+end_src
+
+* FLYCHECK
+Install =luacheck= from your Linux distro’s repositories for flycheck to work correctly with lua files. Install =python-pylint= for flycheck to work with python files. For more information on language support for flycheck, https://www.flycheck.org/en/latest/languages.html.
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :defer t
+    :diminish
+    :init (global-flycheck-mode))
+#+end_src
+
 * FONTS
 Defining the various fonts that Emacs will use.
 
@@ -395,16 +496,25 @@ You can use the bindings CTRL plus =/- for zooming in/out. You can also use the 
 * PROJECTILE
 Projectile is a project interaction library for Emacs.  
 #+begin_src emacs-lisp
-  (use-package projectile
-    :ensure t
-    :config
-    (projectile-mode 1))
+(use-package projectile
+  :ensure t
+  :diminish
+  :config
+  (projectile-mode 1))
 #+end_src
 
 * THEME
 #+begin_src emacs-lisp
-(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-(load-theme 'silkworm t)
+  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+
+  (use-package doom-themes
+    :ensure t
+    :config
+    (setq doom-themes-enable-bold t
+  	doom-themes-enable-italic t))
+
+  (load-theme 'silkworm t)
+  ;; (load-theme 'doom-henna t)
 #+end_src
 
 * GRAPHICAL USER INTERFACE TWEAKS
@@ -414,7 +524,7 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  ;;(scroll-bar-mode -1)
+  (scroll-bar-mode -1)
 #+end_src
 
 ** Display Line Numbers and Truncated Lines
@@ -428,41 +538,77 @@ Let's make GNU Emacs look a little better.
 + Counsel, a collection of Ivy-enhanced vrsions of common Emacs commands.
 + Ivy-rich allows us to add descriptions alongside the commands in M-x.
 #+begin_src emacs-lisp
-  (use-package counsel
-    :after ivy
-    :ensure t
-    :config (counsel-mode))
-    
-  (use-package ivy
-    :ensure t
-    :bind
-    ;; ivy-resume resumes the last Ivy-based completion.
-    (("C-c C-r" . ivy-resume)
-     ("C-x B" . ivy-switch-buffer-other-window))
-    :custom
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (setq enable-recursive-minibuffers t)
-    :config
-    (ivy-mode))
+(use-package counsel
+  :after ivy
+  :ensure t
+  :diminish
+  :config (counsel-mode))
+  
+(use-package ivy
+  :ensure t
+  :bind
+  ;; ivy-resume resumes the last Ivy-based completion.
+  (("C-c C-r" . ivy-resume)
+   ("C-x B" . ivy-switch-buffer-other-window))
+  :diminish
+  :custom
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+  :config
+  (ivy-mode))
 
-  (use-package all-the-icons-ivy-rich
-    :ensure t
-    :init (all-the-icons-ivy-rich-mode 1))
+(use-package all-the-icons-ivy-rich
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
 
-  (use-package ivy-rich
-    :after ivy
-    :ensure t
-    :init (ivy-rich-mode 1) ;; This gets us deescriptions in M-x.
-    :custom
-    (ivy-virtual-abbreviate 'full
-     ivy-rich-switch-buffer-align-virtual-buffer t
-     ivy-rich-path-style 'abbrev)
-    :config
-    (ivy-set-display-transformer 'ivy-switch-buffer
-  			       'ivy-rich-switch-buffer-transformer))
+(use-package ivy-rich
+  :after ivy
+  :ensure t
+  :init (ivy-rich-mode 1) ;; This gets us deescriptions in M-x.
+  :custom
+  (ivy-virtual-abbreviate 'full
+   ivy-rich-switch-buffer-align-virtual-buffer t
+   ivy-rich-path-style 'abbrev)
+  :config
+  (ivy-set-display-transformer 'ivy-switch-buffer
+			       'ivy-rich-switch-buffer-transformer))
 #+end_src
 
+* LANGUAGE SUPPORT
+Emacs has built-in programming language modes for Lisp, Scheme, DSSSL, Ada, ASM, AWK, C, C++, Fortran, Icon, IDL (CORBA), IDLWAVE, Java, Javascript, M4, Makefiles, Metafont, Modula2, Object Pascal, Objective-C, Octave, Pascal, Perl, Pike, PostScript, Prolog, Python, Ruby, Simula, SQL, Tcl, Verilog, and VHDL.  Other languages will require you to install additional modes.
+#+begin_src emacs-lisp
+(use-package racket-mode :ensure t)
+(use-package lua-mode :ensure t)
+#+end_src
+
+* NEOTREE
+Neotree is a file tree viewer.  When you open neotree, it jumps to the current file thanks to neo-smart-open.  The neo-window-fixed-size setting makes the neotree width be adjustable.  NeoTree provides following themes: classic, ascii, arrow, icons, and nerd.  Theme can be configed by setting “two” themes for neo-theme: one for the GUI and one for the terminal.  I like to use ‘SPC t’ for ‘toggle’ keybindings, so I have used ‘SPC t n’ for toggle-neotree.
+
+| COMMAND        | DESCRIPTION                 | KEYBINDING |
+|----------------+-----------------------------+------------|
+| neotree-toggle | /Toggle neotree/            | SPC t n    |
+| neotree-dir    | /Open directory in neotree/ | SPC d n    |
+
+#+begin_src emacs-lisp
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-smart-open t
+	neo-show-hidden-files t
+	neo-window-width 55
+	neo-window-fixed-size nil
+	inhibit-compacting-font-caches t
+	projectile-switch-project-action 'neotree-projectile-action)
+  ;; Truncate long filenames in neotree
+  (add-hook 'neo-after-create-hook
+	    #'(lambda (_)
+		(with-current-buffer (get-buffer neo-buffer-name)
+		  (setq truncate-lines t)
+		  (setq word-wrap nil)
+		  (make-local-variable 'auto-hscroll-mode)
+		  (setq auto-hscroll-mode nil)))))
+#+end_src
 
 * ORG-MODE
 ** Enabling Table of Contents
@@ -482,7 +628,8 @@ Let's make GNU Emacs look a little better.
 
 ** Disable Electric Indent
 #+begin_src emacs-lisp
-(electric-indent-mode -1)
+  (electric-indent-mode -1)
+  (setq org-edit-src-content-indentation 0)
 #+end_src
 
 * SHELLS AND TERMINALS
@@ -521,25 +668,25 @@ Eshell is an Emacs /shell/ that is written in elisp
 
 ** Vterm-toggle
 #+begin_src emacs-lisp
- (use-package vterm-toggle
- :after vterm
- :ensure t
- :config
- (setq vterm-toggle-fullscreen-p nil)
- (setq vterm-toggle-scope 'project)
- (add-to-list 'display-buffer-alist
-              '((lambda (buffer-or-name _)
-                    (let ((buffer (get-buffer buffer-or-name)))
-                      (with-current-buffer buffer
-                        (or (equal major-mode 'vterm-mode)
-                            (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
-                 (display-buffer-reuse-window display-buffer-at-bottom)
-                 ;;(display-buffer-reuse-window display-buffer-in-direction)
-                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
-                 ;;(direction . bottom)
-                 ;;(dedicated . t) ;dedicated is supported in emacs27
-                 (reusable-frames . visible)
-                 (window-height . 0.3))))
+  (use-package vterm-toggle
+    :after vterm
+    :ensure t
+    :config
+    (setq vterm-toggle-fullscreen-p nil)
+    (setq vterm-toggle-scope 'project)
+    (add-to-list 'display-buffer-alist
+                 '((lambda (buffer-or-name _)
+                     (let ((buffer (get-buffer buffer-or-name)))
+                       (with-current-buffer buffer
+                         (or (equal major-mode 'vterm-mode)
+                             (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                   (display-buffer-reuse-window display-buffer-at-bottom)
+                   ;;(display-buffer-reuse-window display-buffer-in-direction)
+                   ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                   ;;(direction . bottom)
+                   ;;(dedicated . t) ;dedicated is supported in emacs27
+                   (reusable-frames . visible)
+                   (window-height . 0.3))))
 #+end_src
 
 * SUDO EDIT
@@ -555,9 +702,10 @@ Eshell is an Emacs /shell/ that is written in elisp
 
 * RAINBOW MODE
 #+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :ensure t
-    :hook org-mode prog-mode)
+(use-package rainbow-mode
+  :ensure t
+  :diminish
+  :hook org-mode prog-mode)
 #+end_src
 
 * SPLASH SCREEN
@@ -587,24 +735,38 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
         (lambda () (get-buffer-create dashboard-buffer-name)))
 #+end_src
 
+* TRANSPARENCY
+With Emacs version 29, true transparency has been added.
+#+begin_src emacs-lisp
+(if (display-graphic-p)
+    nil
+    (add-to-list 'default-frame-alist '(alpha-background . 90))) ; For all new frames henceforth
+;; (when (display-graphic-p)
+;;   ;; Your GUI-specific code here
+;;   (add-to-list 'default-frame-alist '(alpha-background . 90)))   
+;; (when (display-graphic-p)
+  ;; (set-frame-parameter nil 'alpha-background 90))
+#+end_src 
+
 * WHICH-KEY
 #+begin_src emacs-lisp
-  (use-package which-key
-    :ensure t
-    :init
-      (which-key-mode 1)
-    :config
-    (setq which-key-side-window-location 'bottom
-  	which-key-sort-order #'which-key-key-order-alpha
-  	which-key-sort-uppercase-first nil
-  	which-key-add-column-padding 1
-  	which-key-max-display-columns nil
-  	which-key-min-display-lines 6
-  	which-key-side-window-slot -10
-  	which-key-side-window-max-height 0.25
-  	which-key-idle-delay 0.8
-  	which-key-max-description-length 25
-  	which-key-allow-imprecise-window-fit t
-  	which-key-separator " => "))
+(use-package which-key
+  :ensure t
+  :init
+    (which-key-mode 1)
+  :diminish
+  :config
+  (setq which-key-side-window-location 'bottom
+	which-key-sort-order #'which-key-key-order-alpha
+	which-key-sort-uppercase-first nil
+	which-key-add-column-padding 1
+	which-key-max-display-columns nil
+	which-key-min-display-lines 6
+	which-key-side-window-slot -10
+	which-key-side-window-max-height 0.25
+	which-key-idle-delay 0.8
+	which-key-max-description-length 25
+	which-key-allow-imprecise-window-fit nil
+	which-key-separator " → "))
 #+end_src
 
