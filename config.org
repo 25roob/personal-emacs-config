@@ -17,6 +17,7 @@
 - [[#app-launcher][APP LAUNCHER]]
   - [[#counsel-linux-app][Counsel Linux App]]
   - [[#app-launcher-1][App-Launcher]]
+- [[#beacon][BEACON]]
 - [[#company][COMPANY]]
 - [[#diminish][DIMINISH]]
 - [[#dired][DIRED]]
@@ -27,7 +28,7 @@
 - [[#projectile][PROJECTILE]]
 - [[#theme][THEME]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
-  - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
+  - [[#disable-menubar-toolbars-scrollbars-and-blinking-cursor][Disable Menubar, Toolbars, Scrollbars and Blinking cursor]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
 - [[#language-support][LANGUAGE SUPPORT]]
@@ -35,6 +36,7 @@
 - [[#org-mode][ORG-MODE]]
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
+  - [[#diminish-org-indent][Diminish org indent]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-babel-languages][Org babel languages]]
 - [[#parinfer][PARINFER]]
@@ -50,6 +52,7 @@
 - [[#splash-screen][SPLASH SCREEN]]
   - [[#for-emacs-daemon][For Emacs Daemon]]
 - [[#transparency][TRANSPARENCY]]
+- [[#undo-tree-make-it-appear-at-one-side-instead-of-bottom][UNDO-TREE Make it appear at one side instead of bottom]]
 - [[#which-key][WHICH-KEY]]
 
 * DEPENDENCIES  
@@ -125,6 +128,7 @@
   (dt/leader-keys
     "SPC" '(counsel-M-x :wk "Counsel M-x")
     "." '(find-file :wk "Find file")
+    "0" '(beacon-blink :wk "Find cursor")
     "f" '(:ignore t :wk "Frequent files")
     "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
     "f r" '(counsel-recentf :wk "Find recent files")
@@ -187,6 +191,7 @@
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t n" '(neotree-toggle :wk "Toggle neotree file viewer")
     "t t" '(visual-line-mode :wk "Toggle truncated lines")
+    "t u" '(undo-tree-visualize :wk "Toggle undo tree")
     "t v" '(vterm-toggle :wk "Toggle vterm"))
 
   (dt/leader-keys
@@ -279,6 +284,16 @@ The =app-launcher= is a better run launcher since it reads the desktop applicati
                   (unwind-protect
                     (app-launcher-run-app)
                     (delete-frame))))
+#+end_src
+
+* BEACON
+I often lose track of my cursor...
+#+begin_src emacs-lisp
+(use-package beacon
+  :ensure t
+  :diminish beacon-mode
+  :init
+  (beacon-mode 1))
 #+end_src
 
 * COMPANY
@@ -414,11 +429,12 @@ Projectile is a project interaction library for Emacs.
 * GRAPHICAL USER INTERFACE TWEAKS
 Let's make GNU Emacs look a little better.
 
-** Disable Menubar, Toolbars and Scrollbars
+** Disable Menubar, Toolbars, Scrollbars and Blinking cursor
 #+begin_src emacs-lisp
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(blink-cursor-mode 0)   
 #+end_src
 
 ** Display Line Numbers and Truncated Lines
@@ -519,6 +535,15 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
   (use-package org-bullets :ensure t)
   (add-hook  'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
+
+** Diminish org indent
+#+begin_src emacs-lisp
+(use-package org-indent
+  :diminish org-indent-mode)
+#+end_src
+
+#+RESULTS:
+|   |
 
 ** Disable Electric Indent
 #+begin_src emacs-lisp
@@ -713,6 +738,28 @@ With Emacs version 29, true transparency has been added.
 ;; (when (display-graphic-p)
   ;; (set-frame-parameter nil 'alpha-background 90))
 #+end_src 
+
+* UNDO-TREE Make it appear at one side instead of bottom
+#+begin_src emacs-lisp
+(defun undo-tree-split-side-by-side (original-function &rest args)
+  "Split undo-tree side-by-side"
+  (let ((split-height-threshold nil)
+        (split-width-threshold 0))
+    (apply original-function args)))
+
+(advice-add 'undo-tree-visualize :around #'undo-tree-split-side-by-side)
+
+;; (defun undo-tree-hook ()
+;;   "Hook to resize the undo-tree-visualizer window to a narrow width on the left."
+;;   (interactive)
+;;   (unless (not (get-buffer-window " *undo-tree*"))
+;;     (save-excursion
+;;       (select-window (get-buffer-window " *undo-tree*"))
+;;       (evil-window-set-width 45)
+;;       (evil-window-left 1))))
+
+;; (add-hook 'undo-tree-visualizer-mode-hook 'undo-tree-hook)
+#+end_src
 
 * WHICH-KEY
 #+begin_src emacs-lisp
