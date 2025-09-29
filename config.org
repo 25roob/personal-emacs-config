@@ -515,6 +515,7 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
 
 ** Org babel languages
 *** For Racket
+From the amazing work of DEADB17: https://github.com/DEADB17/ob-racket
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.config/emacs/langs/ob-racket")
 
@@ -526,40 +527,6 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
   :pin manual
   :config
   (append '((racket . t) (scribble . t)) org-babel-load-languages))
-    
-
-
-;; (add-to-list 'org-src-lang-modes '("racket" . racket-mode))
-
-;; (defun org-babel-execute:racket (body params)
-;;   "Execute a Racket script and return plain output."
-;;   (let* ((full-body (org-babel-expand-body:generic body params))
-;;          (tmp-src-file (org-babel-temp-file "racket-" ".rkt"))
-;;          (cmd (format "racket %s" (shell-quote-argument tmp-src-file)))
-;;          (result (with-temp-file tmp-src-file
-;;                    (insert full-body)
-;;                    (shell-command-to-string cmd))))
-;;     ;; Clean up the result: remove blank lines, trim whitespace
-;;     (replace-regexp-in-string
-;;      "^\\s-*$" ""  ; remove empty lines
-;;      (replace-regexp-in-string
-;;       "\\`\\s-+\\|\\s-+\\'" "" result))))  ; trim whitespace   
-
-;; This just works, but it's messy
-;; (defun org-babel-execute:racket (body params)
-;;   "Execute Racket code block, including HtDP teaching languages."
-;;   (let* ((tmp-src-file (org-babel-temp-file "racket-" ".rkt"))
-;;          (full-body (org-babel-expand-body:generic body params)))
-;;     (with-temp-file tmp-src-file
-;;       (insert full-body))
-;;     ;; Run via `racket`, which supports `#lang htdp/bsl`
-;;     (org-babel-eval "racket" full-body)))
-
-#+end_src
-
-#+begin_src racket :lang htdp/bsl
-(require htdp/image)
-(circle 10 "solid" "red") 
 #+end_src
 
 * SHELLS AND TERMINALS
