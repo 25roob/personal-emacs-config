@@ -150,14 +150,15 @@
    `(undo-tree-visualizer-register-face ((,class :foreground ,type)))
 	 `(slime-repl-inputed-output-face ((,class (:foreground ,type))))
    `(trailing-whitespace ((,class :foreground ,unspec :background ,warning)))
-   `(rainbow-delimiters-depth-1-face ((,class :foreground ,fg1)))
-   `(rainbow-delimiters-depth-2-face ((,class :foreground ,type)))
-   `(rainbow-delimiters-depth-3-face ((,class :foreground ,var)))
+   `(rainbow-delimiters-depth-1-face ((,class :foreground ,keyword)))
+   `(rainbow-delimiters-depth-2-face ((,class :foreground ,func)))
+   `(rainbow-delimiters-depth-3-face ((,class :foreground ,builtin)))
    `(rainbow-delimiters-depth-4-face ((,class :foreground ,const)))
-   `(rainbow-delimiters-depth-5-face ((,class :foreground ,keyword)))
-   `(rainbow-delimiters-depth-6-face ((,class :foreground ,fg1)))
+   `(rainbow-delimiters-depth-5-face ((,class :foreground ,var)))
+   `(rainbow-delimiters-depth-6-face ((,class :foreground ,warning2)))
    `(rainbow-delimiters-depth-7-face ((,class :foreground ,type)))
-   `(rainbow-delimiters-depth-8-face ((,class :foreground ,var)))
+   `(rainbow-delimiters-depth-8-face ((,class :foreground ,fg1)))
+   `(rainbow-delimiters-depth-9-face ((,class :foreground ,str)))
    `(magit-item-highlight ((,class :background ,bg3)))
    `(magit-section-heading        ((,class (:foreground ,keyword :weight bold))))
    `(magit-hunk-heading           ((,class (:background ,bg3))))
@@ -304,3 +305,4 @@
 ;; End:
 
 ;;; silkworm-theme.el ends here
+

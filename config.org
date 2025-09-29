@@ -8,6 +8,7 @@
 - [[#dependencies][DEPENDENCIES]]
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#adding-the-scripts-directory-to-path][Adding the scripts directory to path]]
+  - [[#constants][Constants]]
   - [[#sourcing-the-scripts][Sourcing the scripts]]
   - [[#load-evil-mode][Load Evil mode]]
   - [[#general-keybindings][General keybindings]]
@@ -36,12 +37,16 @@
   - [[#enabling-org-bullets][Enabling Org Bullets]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-babel-languages][Org babel languages]]
+- [[#parinfer][PARINFER]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
   - [[#vterm][Vterm]]
   - [[#vterm-toggle][Vterm-toggle]]
-- [[#sudo-edit][SUDO EDIT]]
+- [[#rainbow-delimiters][RAINBOW DELIMITERS]]
 - [[#rainbow-mode][RAINBOW MODE]]
+- [[#startup][STARTUP]]
+  - [[#doom-emacs-trick-with-the-gc-for-faster-startup][Doom emacs trick with the GC for faster startup]]
+- [[#sudo-edit][SUDO EDIT]]
 - [[#splash-screen][SPLASH SCREEN]]
   - [[#for-emacs-daemon][For Emacs Daemon]]
 - [[#transparency][TRANSPARENCY]]
@@ -58,10 +63,18 @@
 (add-to-list 'load-path "~/.config/emacs/scripts/")
 #+end_src
 
+** Constants
+#+begin_src emacs-lisp
+;; environment
+(defconst *is-windows* (eq system-type 'windows-nt))
+(defconst *is-unix* (not *is-windows*))
+#+end_src
+
 ** Sourcing the scripts
 #+begin_src emacs-lisp
 (require 'elpaca-setup)
 (require 'buffer-move)
+(require 'undo-tree)
 #+end_src
   
 ** Load Evil mode
@@ -529,6 +542,21 @@ From the amazing work of DEADB17: https://github.com/DEADB17/ob-racket
   (append '((racket . t) (scribble . t)) org-babel-load-languages))
 #+end_src
 
+* PARINFER
+#+begin_src emacs-lisp
+(use-package parinfer-rust-mode
+  :ensure t
+  ;; :defer 1
+  :hook
+  emacs-lisp-mode
+  racket-mode
+  lisp-mode
+  clojure-mode
+  :custom
+  (parinfer-rust-auto-download t))
+
+#+end_src
+
 * SHELLS AND TERMINALS
 
 ** Eshell
@@ -586,6 +614,55 @@ Eshell is an Emacs /shell/ that is written in elisp
                    (window-height . 0.3))))
 #+end_src
 
+* RAINBOW DELIMITERS
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :defer 1
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode)
+  :config
+  (set-face-attribute 'rainbow-delimiters-unmatched-face nil
+                      :foreground "red"
+                      :inherit 'error
+                      :box t))
+#+end_src
+
+* RAINBOW MODE
+#+begin_src emacs-lisp
+(use-package rainbow-mode
+  :ensure t
+  :diminish
+  :hook org-mode prog-mode)
+#+end_src
+
+* STARTUP
+** Doom emacs trick with the GC for faster startup
+From the Github of Meatcar
+#+begin_src emacs-lisp
+;; max memory available for gc on startup
+(defvar me/gc-cons-threshold 16777216)
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold me/gc-cons-threshold
+                  gc-cons-percentage 0.1)))
+
+;; max memory available for gc when opening minibuffer
+(defun me/defer-garbage-collection-h ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun me/restore-garbage-collection-h ()
+  ;; Defer it so that commands launched immediately after will enjoy the
+  ;; benefits.
+  (run-at-time
+   1 nil (lambda () (setq gc-cons-threshold me/gc-cons-threshold))))
+
+(add-hook 'minibuffer-setup-hook #'me/defer-garbage-collection-h)
+(add-hook 'minibuffer-exit-hook #'me/restore-garbage-collection-h)
+(setq garbage-collection-messages t)
+#+end_src
+
 * SUDO EDIT
 =sudo-edit= gives us the ability to open files with sudo privileges or switch over to editing with sudo privileges if we initially opened the file without such privileges.
 #+begin_src emacs-lisp
@@ -595,14 +672,6 @@ Eshell is an Emacs /shell/ that is written in elisp
     (dt/leader-keys
       "f u" '(sudo-edit-find-file :wk "Sudo find file")
       "f U" '(sudo-edit :wk "Sudo edit file")))
-#+end_src
-
-* RAINBOW MODE
-#+begin_src emacs-lisp
-(use-package rainbow-mode
-  :ensure t
-  :diminish
-  :hook org-mode prog-mode)
 #+end_src
 
 * SPLASH SCREEN
@@ -666,4 +735,3 @@ With Emacs version 29, true transparency has been added.
 	which-key-allow-imprecise-window-fit nil
 	which-key-separator " → "))
 #+end_src
-
