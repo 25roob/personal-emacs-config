@@ -25,6 +25,7 @@
 - [[#delete-selection][DELETE SELECTION]]
 - [[#diminish][DIMINISH]]
 - [[#dired][DIRED]]
+- [[#disable-angular-brackets][DISABLE ANGULAR BRACKETS]]
 - [[#enable-electric-pair-mode][ENABLE ELECTRIC PAIR MODE]]
 - [[#flycheck][FLYCHECK]]
 - [[#fonts][FONTS]]
@@ -58,6 +59,7 @@
   - [[#vterm-toggle][Vterm-toggle]]
 - [[#rainbow-delimiters][RAINBOW DELIMITERS]]
 - [[#rainbow-mode][RAINBOW MODE]]
+- [[#scrolling][SCROLLING]]
 - [[#startup][STARTUP]]
   - [[#doom-emacs-trick-with-the-gc-for-faster-startup][Doom emacs trick with the GC for faster startup]]
 - [[#sudo-edit][SUDO EDIT]]
@@ -128,6 +130,7 @@
   (define-key evil-motion-state-map (kbd "RET") nil)
   (define-key evil-motion-state-map (kbd "TAB") nil))
 (setq org-return-follows-link t)
+
 #+end_src
 
 ** General keybindings
@@ -433,7 +436,8 @@ I often lose track of my cursor...
 * DECORATIONS
 Remove the window decorations
 #+begin_src emacs-lisp
-(set-frame-parameter nil 'undecorated t)
+;; (set-frame-parameter nil 'undecorated t)
+(add-to-list 'default-frame-alist '(undecorated . t))
 #+end_src
 
 * DELETE SELECTION
@@ -467,6 +471,23 @@ This package implements hiding or abbreviation of the modeline displays (lighter
   (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
   (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
   (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file)) 
+#+end_src
+
+* DISABLE ANGULAR BRACKETS
+#+begin_src emacs-lisp
+;; (defun global-ignore-angle-brackets ()
+;;   "Treat < and > as punctuation globally."
+;;   (modify-syntax-entry ?< ".")
+;;   (modify-syntax-entry ?> "."))
+
+;; (add-hook 'after-change-major-mode-hook 'global-ignore-angle-brackets)   
+
+(defun global-treat-angle-as-operators ()
+  "Treat < and > as operators globally."
+  (modify-syntax-entry ?< "'")
+  (modify-syntax-entry ?> "'"))
+
+(add-hook 'after-change-major-mode-hook 'global-treat-angle-as-operators)
 #+end_src
 
 * ENABLE ELECTRIC PAIR MODE
@@ -914,6 +935,14 @@ Eshell is an Emacs /shell/ that is written in elisp
   :ensure t
   :diminish
   :hook org-mode prog-mode)
+#+end_src
+
+* SCROLLING
+#+begin_src emacs-lisp
+(setq scroll-conservatively 101
+      scroll-step 1)   
+
+(setq scroll-margin 8)
 #+end_src
 
 * STARTUP
