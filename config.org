@@ -34,6 +34,7 @@
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#disable-menubar-toolbars-scrollbars-and-blinking-cursor][Disable Menubar, Toolbars, Scrollbars and Blinking cursor]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+  - [[#hide-emphasis-markers][Hide Emphasis Markers]]
 - [[#git-programs][GIT PROGRAMS]]
   - [[#git-time-machine][Git Time Machine]]
   - [[#magit][Magit]]
@@ -70,6 +71,7 @@
 - [[#transparency][TRANSPARENCY]]
 - [[#undo-tree][UNDO-TREE]]
 - [[#which-key][WHICH-KEY]]
+- [[#12][]]
 
 * DEPENDENCIES  
 - CMake =sudo apt install cmake=
@@ -146,7 +148,7 @@
     :states '(normal insert visual emacs)
     :keymaps 'override
     :prefix "SPC"
-    :global-prefix "M-SPC")
+    :global-prefix "s-SPC")
 
   (dt/leader-keys
     "SPC" '(counsel-M-x :wk "Counsel M-x")
@@ -574,7 +576,8 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
 (menu-bar-mode -1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+(unless (display-graphic-p)
+  (scroll-bar-mode -1))
 (blink-cursor-mode 0)   
 #+end_src
 
@@ -582,6 +585,11 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
 (global-display-line-numbers-mode 1)
 (global-visual-line-mode 1)
+#+end_src
+
+** Hide Emphasis Markers
+#+begin_src emacs-lisp
+(setq org-hide-emphasis-markers t)
 #+end_src
 
 * GIT PROGRAMS
@@ -994,8 +1002,13 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
   :config
   ;; (setq dashboard-banner-logo-title "Welcome to Emacs!")
 					;options: 'logo 'official "*.png" "*.txt" (cons "op1" "op2")
-  (setq dashboard-startup-banner (cons "~/.config/emacs/banners/mini-marivector.png"
-                                       "~/.config/emacs/banners/ascii.txt"))       
+  ;; (setq dashboard-startup-banner 
+  ;;       (if (display-graphic-p) 
+  ;;           "~/.config/emacs/banners/ascii.txt"
+  ;;         "~/.config/emacs/banners/mini-marivector.png"))       
+  ;; (if (display-graphic-p)
+  ;;     (setq dashboard-startup-banner "~/.config/emacs/banners/ascii.txt")
+  ;;     (setq dashboard-startup-banner "~/.config/emacs/banners/mini-marivector.png"))
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
   (setq dashboard-items '((recents  . 5)
@@ -1003,6 +1016,15 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
   ;; (setq dashboard-items '((recents  . 5)))
   (setq dashboard-center-content t)
   (dashboard-setup-startup-hook))
+
+;; (if (display-graphic-p)
+;;     (setq dashboard-startup-banner "~/.config/emacs/banners/ascii.txt")
+;;     (setq dashboard-startup-banner "~/.config/emacs/banners/mini-marivector.png"))
+
+(setq dashboard-startup-banner
+      (if (display-graphic-p)
+          "~/.config/emacs/banners/mini-marivector.png"
+        "~/.config/emacs/banners/ascii.txt"))   
 #+end_src
 
 ** For Emacs Daemon
@@ -1084,3 +1106,7 @@ Make it appear at one side instead of bottom
 	which-key-allow-imprecise-window-fit nil
 	which-key-separator " → "))
 #+end_src
+
+* TODO [1/2]
+- [X] Make checkboses work correctly
+- [ ] Checkout harpoon for emacs
