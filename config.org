@@ -576,8 +576,9 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
 (menu-bar-mode -1)
 (tool-bar-mode -1)
-(unless (display-graphic-p)
-  (scroll-bar-mode -1))
+(if (getenv "ANDROID_ROOT")
+    nil
+    (scroll-bar-mode -1))
 (blink-cursor-mode 0)   
 #+end_src
 
@@ -1017,14 +1018,20 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
   (setq dashboard-center-content t)
   (dashboard-setup-startup-hook))
 
+(if (not (getenv "ANDROID_ROOT"))
+    (setq dashboard-startup-banner (cons "~/.config/emacs/banners/mini-marivector.png"
+                                         "~/.config/emacs/banners/ascii.txt"))
+    (setq dashboard-startup-banner "~/.config/emacs/banners/ascii.txt"))
+;; (setq dashboard-startup-banner "~/.config/emacs/banners/mini-marivector.png")
+
 ;; (if (display-graphic-p)
 ;;     (setq dashboard-startup-banner "~/.config/emacs/banners/ascii.txt")
-;;     (setq dashboard-startup-banner "~/.config/emacs/banners/mini-marivector.png"))
+;;     nil)
 
-(setq dashboard-startup-banner
-      (if (display-graphic-p)
-          "~/.config/emacs/banners/mini-marivector.png"
-        "~/.config/emacs/banners/ascii.txt"))   
+;; (setq dashboard-startup-banner
+;;       (if (display-graphic-p)
+;;           "~/.config/emacs/banners/ascii.txt"
+;;         "~/.config/emacs/banners/mini-marivector.png"))   
 #+end_src
 
 ** For Emacs Daemon
