@@ -20,6 +20,7 @@
 - [[#auto-revert-mode][AUTO REVERT MODE]]
 - [[#backup][BACKUP]]
 - [[#beacon][BEACON]]
+- [[#clipboard-on-wayland][CLIPBOARD ON WAYLAND]]
 - [[#company][COMPANY]]
 - [[#decorations][DECORATIONS]]
 - [[#delete-selection][DELETE SELECTION]]
@@ -49,6 +50,7 @@
   - [[#enabling-org-bullets][Enabling Org Bullets]]
   - [[#diminish-org-indent][Diminish org indent]]
   - [[#disable-electric-indent][Disable Electric Indent]]
+  - [[#lists][Lists]]
   - [[#org-babel-languages][Org babel languages]]
   - [[#org-level-headers][Org Level Headers]]
 - [[#parinfer][PARINFER]]
@@ -70,6 +72,7 @@
 - [[#tldr][TLDR]]
 - [[#transparency][TRANSPARENCY]]
 - [[#undo-tree][UNDO-TREE]]
+- [[#wayland-paste][WAYLAND-PASTE]]
 - [[#which-key][WHICH-KEY]]
 - [[#12][]]
 
@@ -159,7 +162,8 @@
     "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
     "f r" '(counsel-recentf :wk "Find recent files")
     "TAB" '(:ignore t :wk "Comment out")
-    "TAB TAB" '(comment-line :wk "Comment lines"))
+    "TAB TAB" '(comment-line :wk "Comment lines")
+    "c y" '(clipboard-yank :wk "Clipboard yank"))
   
   (dt/leader-keys
     "b" '(:ignore t :wk "Bookmarks/Buffers")
@@ -322,6 +326,9 @@
   )
 #+end_src
 
+#+RESULTS:
+: [nil 26975 64280 523831 nil elpaca-process-queues nil nil 933000 nil]
+
 ** org-tempo
 #+begin_src emacs-lisp
   (require 'org-tempo)
@@ -412,6 +419,17 @@ I often lose track of my cursor...
   :init
   (beacon-mode 1))
 #+end_src
+
+* CLIPBOARD ON WAYLAND
+#+begin_src emacs-lisp
+;; (setopt select-active-regions nil)
+;; (setopt select-enable-clipboard t)
+;; (setopt select-enable-primary nil)
+;; (setopt interprogram-cut-function #'gui-select-text)
+#+end_src
+
+#+RESULTS:
+: gui-select-text
 
 * COMPANY
 =company= is a completion framework for Emacs. The name stands for "Complete Anything". Completion will start automatically after you type a few letters. Use M-p and M-n to select, <return> to complete or <TAB> to complete the common part.
@@ -692,52 +710,54 @@ No more Triple ESC to quit the minibuffer.
 * MODELINE
 
 #+begin_src emacs-lisp
-(set-face-attribute 'mode-line nil :box nil)
-(set-face-attribute 'mode-line-inactive nil :box nil)   
-
 ;; (use-package doom-modeline
 ;;   :ensure t
 ;;   :init (doom-modeline-mode 1)
 ;;   :config
-;;   (setq doom-modeline-height 30
+;;   (setq doom-modeline-height 28
 ;; 	doom-modeline-bar-width 5
 ;; 	doom-modeline-persp-name t
 ;; 	doom-modeline-persp-icon t))
 
-;; (use-package anzu
-;;   :defer 1
-;;   :after isearch
-;;   :ensure t
-;;   :config
-;;   (global-anzu-mode 1))
+(use-package anzu
+  :defer 1
+  :after isearch
+  :ensure t
+  :config
+  (global-anzu-mode 1))
 
-;; (use-package minions
-;;   :defer 1
-;;   :ensure t
-;;   :config
-;;   (minions-mode 1))
+(use-package minions
+  :defer 1
+  :ensure t
+  :config
+  (minions-mode 1))
 
-;; (use-package doom-modeline
-;;   :demand t
-;;   :ensure t
-;;   :custom
-;;   (inhibit-compacting-font-caches t)
-;;   (doom-modeline-height 28)
-;;   ;; 1 minor mode will be shown thanks to minions
-;;   (doom-modeline-minor-modes t)
-;;   (doom-modeline-hud t)
-;;   :config
-;;   (doom-modeline-mode 1))
+(use-package doom-modeline
+  :demand t
+  :ensure t
+  :custom
+  (inhibit-compacting-font-caches t)
+  (doom-modeline-height 26)
+  ;; 1 minor mode will be shown thanks to minions
+  (doom-modeline-minor-modes t)
+  (doom-modeline-hud t)
+  :config
+  (doom-modeline-mode 1))
+
+(add-hook 'after-init-hook 
+          (lambda ()
+            (set-face-attribute 'mode-line nil :box nil)
+            (set-face-attribute 'mode-line-inactive nil :box nil)))   
 #+end_src
 
 #+RESULTS:
-: [nil 26846 60959 34353 nil elpaca-process-queues nil nil 49000 nil]
+| dashboard-insert-startupify-lists | #[nil ((set-face-attribute 'mode-line nil :box nil) (set-face-attribute 'mode-line-inactive nil :box nil)) nil] | elpaca-process-queues | org-persist-load-all | pgtk-use-im-context-handler | tramp-register-archive-autoload-file-name-handler |
 
 * NEOTREE
 Neotree is a file tree viewer.  When you open neotree, it jumps to the current file thanks to neo-smart-open.  The neo-window-fixed-size setting makes the neotree width be adjustable.  NeoTree provides following themes: classic, ascii, arrow, icons, and nerd.  Theme can be configed by setting “two” themes for neo-theme: one for the GUI and one for the terminal.  I like to use ‘SPC t’ for ‘toggle’ keybindings, so I have used ‘SPC t n’ for toggle-neotree.
 
-| COMMAND        | DESCRIPTION                 | KEYBINDING |
-|----------------+-----------------------------+------------|
+| COMMAND        | DESCRIPTION               | KEYBINDING |
+|----------------+---------------------------+------------|
 | neotree-toggle | /Toggle neotree/            | SPC t n    |
 | neotree-dir    | /Open directory in neotree/ | SPC d n    |
 
@@ -789,6 +809,38 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
 (setq org-edit-src-content-indentation 0)
 #+end_src
 
+** Lists
+I want my lists to shine, to be noticeable
+#+begin_src emacs-lisp
+(font-lock-add-keywords 'org-mode
+                        '(("^\\s-*\\([-]\\) " (1 '(:foreground "#1a9" :weight bold)))
+                          ("^\\s-*\\([+]\\) " (1 '(:foreground "#b59" :weight bold)))))
+
+(font-lock-add-keywords 'org-mode
+			'(("^\\s-*\\([-+]\\) \\(\\[ \\]\\) " (1 '(:foreground "#0cb" :weight bold)) (2 '(:foreground "#dc3" :weight bold)))
+			  ("^\\s-*\\([-+]\\) \\(\\[X\\]\\) " (1 '(:foreground "#0cb" :weight bold)) (2 '(:foreground "#558" :weight bold)))
+			  ("^\\s-*\\([-+]\\) \\(\\[-\\]\\) " (1 '(:foreground "#0cb" :weight bold)) (2 '(:foreground "#07b" :weight bold)))))
+
+(font-lock-add-keywords 'org-mode
+                        '(("^\\s-*\\([-]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1)
+                                                       (match-end 1) "●"))))))
+(font-lock-add-keywords 'org-mode
+                        '(("^\\s-*\\([+]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1)
+                                                       (match-end 1) "◆"))))))    
+
+;; (add-hook 'org-mode-hook
+;;           (lambda ()
+;;             (setq prettify-symbols-alist
+;;                   '(("[ ]" . ?☐)
+;;                     ("[X]" . ?☑)
+;;                     ("[-]" . ?❍)))
+;;             (prettify-symbols-mode 1)))    
+#+end_src
+
+#+RESULTS:
+
 ** Org babel languages
 *** For Racket
 From the amazing work of DEADB17: https://github.com/DEADB17/ob-racket
@@ -829,7 +881,31 @@ From the amazing work of DEADB17: https://github.com/DEADB17/ob-racket
   clojure-mode
   :custom
   (parinfer-rust-auto-download t))
+
+;; (use-package parinfer
+;;   :ensure t
+;;   :bind
+;;   (("C-|" . parinfer-toggle-mode))
+;;   :init
+;;   (progn
+;;     (setq parinfer-extensions
+;;           '(defaults       ; should be included.
+;;             pretty-parens  ; different paren styles for different modes.
+;;             evil           ; If you use Evil.
+;; ;;            lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+;;             paredit        ; Introduce some paredit commands.
+;;             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+;;             smart-yank))   ; Yank behavior depend on mode.
+;;     (add-hook 'clojure-mode-hook #'parinfer-mode)
+;;     (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+;;     (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+;;     (add-hook 'scheme-mode-hook #'parinfer-mode)
+;;     (add-hook 'lisp-mode-hook #'parinfer-mode)))
 #+end_src
+
+#+RESULTS:
+: [nil 26975 14246 603526 nil elpaca-process-queues nil nil 263000 nil]
+
 
 * PERSPECTIVE
 Perspective provides multiple named workspaces (or “perspectives”) in Emacs, similar to multiple desktops in window managers.  Each perspective has its own buffer list and its own window layout, along with some other isolated niceties, like the xref ring.
@@ -1090,6 +1166,17 @@ Make it appear at one side instead of bottom
 ;;       (evil-window-left 1))))
 
 ;; (add-hook 'undo-tree-visualizer-mode-hook 'undo-tree-hook)
+#+end_src
+
+* WAYLAND-PASTE
+#+begin_src emacs-lisp
+(use-package xclip
+  :ensure t
+  :config
+  (setq xclip-program "wl-copy")
+  (setq xclip-select-enable-clipboard t)
+  (setq xclip-mode t)
+  (setq xclip-method 'wl-copy))  
 #+end_src
 
 * WHICH-KEY
