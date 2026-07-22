@@ -36,6 +36,7 @@
   - [[#disable-menubar-toolbars-scrollbars-and-blinking-cursor][Disable Menubar, Toolbars, Scrollbars and Blinking cursor]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
   - [[#hide-emphasis-markers][Hide Emphasis Markers]]
+  - [[#change-the-color-of-vc-mode][Change the color of vc-mode]]
 - [[#git-programs][GIT PROGRAMS]]
   - [[#git-time-machine][Git Time Machine]]
   - [[#magit][Magit]]
@@ -74,7 +75,6 @@
 - [[#undo-tree][UNDO-TREE]]
 - [[#wayland-paste][WAYLAND-PASTE]]
 - [[#which-key][WHICH-KEY]]
-- [[#12][]]
 
 * DEPENDENCIES  
 - CMake =sudo apt install cmake=
@@ -303,6 +303,7 @@
     "t o" '(org-mode :wk "Toggle org mode")
     "t r" '(rainbow-mode :wk "Toggle rainbow mode")
     "t t" '(visual-line-mode :wk "Toggle truncated lines")
+    "t u" '(undo-tree-visualize :wk "Toggle undo tree")
     "t v" '(vterm-toggle :wk "Toggle vterm"))
 
   (dt/leader-keys
@@ -326,8 +327,6 @@
   )
 #+end_src
 
-#+RESULTS:
-: [nil 26975 64280 523831 nil elpaca-process-queues nil nil 933000 nil]
 
 ** org-tempo
 #+begin_src emacs-lisp
@@ -611,6 +610,28 @@ Let's make GNU Emacs look a little better.
 (setq org-hide-emphasis-markers t)
 #+end_src
 
+** Change the color of vc-mode
+
+#+begin_src emacs-lisp
+;; 1. Define your custom face
+(defface my-custom-vc-face
+  '((t (:foreground "cyan" :weight bold)))
+  "Custom face for the Git branch in mode line.")
+
+;; 2. Modify the mode line to use this face for vc-mode
+;; We replace the default (vc-mode vc-mode) entry with a propertized version
+(setq-default mode-line-format
+              (mapcar (lambda (item)
+                        (if (and (listp item) (eq (car item) 'vc-mode))
+                            ;; Replace default vc-mode entry with our custom one
+                            `(:eval (propertize (or vc-mode "") 'face 'my-custom-vc-face))
+                          item))
+                      mode-line-format))
+
+;; 3. Force an update if Emacs is already running
+(force-mode-line-update t)
+#+end_src
+
 * GIT PROGRAMS
 ** Git Time Machine
 git-timemachine is a program that allows you to move backwards and forwards through a file’s commits.  ‘SPC g t’ will open the time machine on a file if it is in a git repo.  Then, while in normal mode, you can use ‘CTRL-j’ and ‘CTRL-k’ to move backwards and forwards through the commits.
@@ -710,48 +731,45 @@ No more Triple ESC to quit the minibuffer.
 * MODELINE
 
 #+begin_src emacs-lisp
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init (doom-modeline-mode 1)
-;;   :config
-;;   (setq doom-modeline-height 28
-;; 	doom-modeline-bar-width 5
-;; 	doom-modeline-persp-name t
-;; 	doom-modeline-persp-icon t))
+;;(use-package doom-modeline
+;;  :ensure t
+;;  :init (doom-modeline-mode 1)
+;;  :config
+;;  (setq doom-modeline-height 26
+;;	doom-modeline-bar-width 5
+;;	doom-modeline-persp-name t
+;;	doom-modeline-persp-icon t))
 
-(use-package anzu
-  :defer 1
-  :after isearch
-  :ensure t
-  :config
-  (global-anzu-mode 1))
+;;(use-package anzu
+;;  :defer 1
+;;  :after isearch
+;;  :ensure t
+;;  :config
+;;  (global-anzu-mode 1))
+;;
+;;(use-package minions
+;;  :defer 1
+;;  :ensure t
+;;  :config
+;;  (minions-mode 1))
 
-(use-package minions
-  :defer 1
-  :ensure t
-  :config
-  (minions-mode 1))
-
-(use-package doom-modeline
-  :demand t
-  :ensure t
-  :custom
-  (inhibit-compacting-font-caches t)
-  (doom-modeline-height 26)
-  ;; 1 minor mode will be shown thanks to minions
-  (doom-modeline-minor-modes t)
-  (doom-modeline-hud t)
-  :config
-  (doom-modeline-mode 1))
+;;(use-package doom-modeline
+;;  :demand t
+;;  :ensure t
+;;  :custom
+;;  (inhibit-compacting-font-caches t)
+;;  (doom-modeline-height 26)
+;;  ;; 1 minor mode will be shown thanks to minions
+;;  (doom-modeline-minor-modes t)
+;;  (doom-modeline-hud t)
+;;  :config
+;;  (doom-modeline-mode 1))
 
 (add-hook 'after-init-hook 
           (lambda ()
             (set-face-attribute 'mode-line nil :box nil)
             (set-face-attribute 'mode-line-inactive nil :box nil)))   
 #+end_src
-
-#+RESULTS:
-| dashboard-insert-startupify-lists | #[nil ((set-face-attribute 'mode-line nil :box nil) (set-face-attribute 'mode-line-inactive nil :box nil)) nil] | elpaca-process-queues | org-persist-load-all | pgtk-use-im-context-handler | tramp-register-archive-autoload-file-name-handler |
 
 * NEOTREE
 Neotree is a file tree viewer.  When you open neotree, it jumps to the current file thanks to neo-smart-open.  The neo-window-fixed-size setting makes the neotree width be adjustable.  NeoTree provides following themes: classic, ascii, arrow, icons, and nerd.  Theme can be configed by setting “two” themes for neo-theme: one for the GUI and one for the terminal.  I like to use ‘SPC t’ for ‘toggle’ keybindings, so I have used ‘SPC t n’ for toggle-neotree.
@@ -1112,8 +1130,8 @@ Directly from: https://github.com/emacs-dashboard/emacs-dashboard?tab=readme-ov-
 
 ** For Emacs Daemon
 #+begin_src emacs-lisp
-  (setq initial-buffer-choice 
-        (lambda () (get-buffer-create dashboard-buffer-name)))
+(setq initial-buffer-choice 
+      (lambda () (get-buffer-create dashboard-buffer-name)))
 #+end_src
 
 * THEME
@@ -1200,7 +1218,3 @@ Make it appear at one side instead of bottom
 	which-key-allow-imprecise-window-fit nil
 	which-key-separator " → "))
 #+end_src
-
-* TODO [1/2]
-- [X] Make checkboses work correctly
-- [ ] Checkout harpoon for emacs
